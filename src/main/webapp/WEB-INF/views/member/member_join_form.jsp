@@ -207,13 +207,7 @@
 			<tr>
 				<td>E-Mail</td>
 				<td>
-					<input type="text" name="email1" required="required" size="10">@
-					<input type="text" name="email2" required="required" size="10">
-					<select name="selectDomain" onchange="changeDomain(this.value)">
-						<option value="">직접입력</option>	
-						<option value="naver.com">naver.com</option>
-						<option value="nate.com">nate.com</option>
-					</select>
+					<input type="text" name="email" required="required" size="10">
 				</td>
 			</tr>
 			<tr>
