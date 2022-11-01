@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <link href="<%=request.getContextPath() %>/resources/css/top.css" rel="stylesheet" type="text/css">
+<link href="<%=request.getContextPath() %>/resources/css/default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<header>

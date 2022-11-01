@@ -1,5 +1,7 @@
 package com.itwillbs.mvc_board.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,35 @@ public class MemberService {
 		return mapper.insertMember(member);
 	}
 
-	// 로그인 loginMember() 호출
+	// 로그인 loginMember()
 	// => 파라미터 : MemberVO 객체, 리턴타입 : MemberVO
 	public MemberVO loginMember(MemberVO member) {
 		return mapper.loginMember(member);
+	}
+
+	// 회원 정보 조회 수행 getMemberInfo()
+	// => 파라미터 : 아이디, 리턴타입 : MemberVO(member)
+	public MemberVO getMemberInfo(String id) {
+		return mapper.selectMemberInfo(id);
+	}
+
+	// 전체 회원 목록 조회 getMemberList()
+	// => 파라미터 : 없음   리턴타입 : List<MemberVO>(memberList)
+	public List<MemberVO> getMemberList() {
+		return mapper.selectMemberList();
+	}
+
+	// 회원 삭제 removeMember()
+	// => 파라미터 : 아이디(id), 리턴타입 : int(deleteCount)
+	public int removeMember(String id) {
+		return mapper.deleteMember(id);
+	}
+
+	// 회원 정보 수정 modifyMember()
+	// => 파라미터 : MemberVO 객체(member), 새 패스워드(newPasswd)
+	// => 리턴타입 : int(updateCount)
+	public int modifyMember(MemberVO member, String newPasswd) {
+		return mapper.updateMember(member, newPasswd);
 	}
 	
 }

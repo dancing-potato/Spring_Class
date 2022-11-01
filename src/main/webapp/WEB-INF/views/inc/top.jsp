@@ -19,7 +19,11 @@
 			<a href="MemberLoginForm.me">Login</a> | <a href="MemberJoinForm.me">Join</a>
 		</c:when>
 		<c:otherwise>
-			<a href="MemberInfo.me">${sessionScope.sId }</a> 님 | <a href="javascript:logout()">Logout</a>
+			<a href="MemberInfo.me?id=${sessionScope.sId }">${sessionScope.sId }</a> 님 | <a href="javascript:logout()">Logout</a>
+			<!-- 만약, 세션 아이디가 "admin" 이면 [관리자페이지] 링크("AdminMain.me") -->
+			<c:if test="${sessionScope.sId eq 'admin' }">
+				| <a href="AdminMain.me">관리자페이지</a>
+			</c:if>
 		</c:otherwise>
 	</c:choose>
 	<hr>
