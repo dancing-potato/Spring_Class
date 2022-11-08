@@ -20,6 +20,19 @@
 	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
 		<constructor-arg ref="hikariConfig"></constructor-arg>		
 	</bean>
+<!-- 	<bean id="dataSourceSpied" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close"> -->
+<!-- 		<constructor-arg ref="hikariConfig"></constructor-arg>		 -->
+<!-- 	</bean> -->
+<!-- 	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource"> -->
+<!-- 		<constructor-arg ref="dataSourceSpied"/> -->
+<!-- 		<property name="logFormatter"> -->
+<!-- 			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter"> -->
+<!-- 				<property name="loggingType" value="MULTI_LINE" /> -->
+<!-- 				<property name="sqlPrefix" value="SQL : " /> -->
+<!-- 			</bean> -->
+<!-- 		</property> -->
+<!-- 	</bean> -->
+	
 
 	
 	<!-- Connection 객체 생성 및 쿼리 전달, 결과 리턴 등의 작업 수행할 SQLSessionFactory 객체 설정 -->

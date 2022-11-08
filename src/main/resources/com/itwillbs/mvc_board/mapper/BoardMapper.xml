@@ -30,8 +30,8 @@
 					#{board_pass}, 
 					#{board_subject}, 
 					#{board_content}, 
-					'', 
-					'', 
+					#{board_file}, 
+					#{board_real_file}, 
 					#{board_num} + 1, 
 					0, 
 					0, 
@@ -48,7 +48,7 @@
 	<select id="selectBoardListCount" resultType="integer">
 		SELECT 
 			COUNT(*) 
-			FROM board
+			FROM board -- 작업 분기
 			<!-- choose, when, otherwise 태그를 사용하여 복수개의 조건 판별(if ~ else if 문 구조) -->
 			<!-- 1. 검색어(keyword)가 널스트링이 아닐 때 검색 수행 -->
 			<if test="!keyword.equals('')">
@@ -83,7 +83,7 @@
 	<!-- 게시물 목록 조회(검색 기능 추가) -->
 	<select id="selectBoardList" resultType="com.itwillbs.mvc_board.vo.BoardVO">
 		SELECT * 
-			FROM board
+			FROM board -- 작업 분기
 			<!-- choose, when, otherwise 태그를 사용하여 복수개의 조건 판별(if ~ else if 문 구조) -->
 			<!-- 1. 검색어(keyword)가 널스트링이 아닐 때 검색 수행 -->
 			<if test="!keyword.equals('')">
@@ -102,7 +102,7 @@
 				-->
 				<choose>
 					<when test="searchType.equals('subject')">
-						WHERE board_subject LIKE '%${keyword}%'
+						WHERE board_subject LIKE '%${keyword}%' 
 					</when>
 					<when test="searchType.equals('content')">
 						WHERE board_content LIKE '%${keyword}%' 

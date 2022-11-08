@@ -1,6 +1,11 @@
 package com.itwillbs.mvc_board.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.itwillbs.mvc_board.service.BoardService;
 import com.itwillbs.mvc_board.vo.BoardVO;
@@ -26,11 +32,80 @@ public class BoardController {
 	}
 	
 	// "/BoardWritePro.bo" 서블릿 요청에 대해 글쓰기 작업 수행할 writePro() - POST
+//	@PostMapping(value = "/BoardWritePro.bo")
+//	public String writePro(@ModelAttribute BoardVO board, Model model) {
+//		int insertCount = service.registBoard(board);
+//		
+//		if(insertCount > 0) {
+//			return "redirect:/BoardList.bo";
+//		} else {
+//			model.addAttribute("msg", "글 쓰기 실패!");
+//			return "member/fail_back";
+//		}
+//		
+//	}
+	
+	// "/BoardWritePro.bo" 서블릿 요청에 대해 글쓰기 작업 수행할 writePro() - POST
+	// => 파일 업로드 기능 추가
 	@PostMapping(value = "/BoardWritePro.bo")
-	public String writePro(@ModelAttribute BoardVO board, Model model) {
+	public String writePro(@ModelAttribute BoardVO board, Model model, HttpSession session) {
+		// 주의! 파일 업로드 기능을 통해 전달받은 파일 객체를 다루기 위해서는
+		// BoardVO 클래스 내에 MultipartFile 타입 변수와 Getter/Setter 정의 필수!
+		// => input type="file" 태그의 name 속성과 동일한 변수명 사용해야함
+//		System.out.println(board.getFile());
+		
+		// 가상 업로드 경로에 대한 실제 업로드 경로 알아내기
+		// => 단, request 객체에 getServletContext() 메서드 대신, session 객체로 동일한 작업 수행
+		//    (request 객체에 해당 메서드 없음)
+		String uploadDir = "/resources/upload"; // 가상의 업로드 경로
+		// => webapp/resources 폴더 내에 upload 폴더 생성 필요
+		String saveDir = session.getServletContext().getRealPath(uploadDir);
+		System.out.println("실제 업로드 경로 : " + saveDir);
+		
+		File f = new File(saveDir); // 실제 경로를 갖는 File 객체 생성
+		// 만약, 해당 경로 상에 디렉토리(폴더)가 존재하지 않을 경우 생성
+		if(!f.exists()) { // 해당 경로가 존재하지 않을 경우
+			// 경로 상의 존재하지 않는 모든 경로 생성
+			f.mkdirs();
+		}
+		
+		// BoardVO 객체에 전달된 MultipartFile 객체 꺼내기
+		MultipartFile mFile = board.getFile();
+		
+		String originalFileName = mFile.getOriginalFilename();
+		long fileSize = mFile.getSize();
+		System.out.println("파일명 : " + originalFileName);
+		System.out.println("파일크기 : " + fileSize + " Byte");
+		
+		// 파일명 중복 방지를 위한 대책
+		// 시스템에서 랜덤ID 값을 추출하여 파일명 앞에 붙여 "랜덤ID값_파일명" 형식으로 설정
+		// 랜덤ID 는 UUID 클래스 활용(UUID : 범용 고유 식별자)
+		String uuid = UUID.randomUUID().toString();
+		System.out.println("업로드 될 파일명 : " + uuid + "_" + originalFileName);
+		
+		// BoardVO 객체에 원본 파일명과 업로드 될 파일명 저장
+		// => 단, uuid 를 결합한 파일명을 사용할 경우 원본 파일명과 실제 파일명을 구분할 필요 없이
+		//    하나의 컬럼에 저장해두고, 원본 파일명이 필요할 경우 "_" 를 구분자로 지정하여
+		//    문자열을 분리하면 두번째 파라미터가 원본 파일명이 된다!
+		board.setBoard_file(originalFileName); // 실제로는 불필요한 컬럼
+		board.setBoard_real_file(uuid + "_" + originalFileName);
+		
 		int insertCount = service.registBoard(board);
 		
 		if(insertCount > 0) {
+			// 파일 등록 작업 성공 시 실제 폴더 위치에 파일 업로드 수행
+			// => MultipartFile 객체의 transferTo() 메서드를 호출하여 파일 업로드 작업 수행
+			//    (파라미터 : new File(업로드 경로, 업로드 할 파일명))
+			try {
+				mFile.transferTo(new File(saveDir, board.getBoard_real_file()));
+			} catch (IllegalStateException e) {
+				System.out.println("IllegalStateException");
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("IOException");
+				e.printStackTrace();
+			}
+			
 			return "redirect:/BoardList.bo";
 		} else {
 			model.addAttribute("msg", "글 쓰기 실패!");

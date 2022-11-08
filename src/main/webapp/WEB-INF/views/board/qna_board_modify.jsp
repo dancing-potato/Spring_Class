@@ -81,6 +81,8 @@
 									required="required">${board.board_content }</textarea>
 					</td>
 				</tr>
+				<!-- 파일 등록 버튼 및 기존 파일 표시 -->
+				
 			</table>
 			<section id="commandCell">
 				<input type="submit" value="수정">&nbsp;&nbsp;
